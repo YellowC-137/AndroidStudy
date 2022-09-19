@@ -12,7 +12,6 @@ class MainViewModel : ViewModel() {
     fun Cal(value:Int) {
         this.txt = value.toString()
         result = value*UsdToWon
-
     }
     fun getResult():Int?{
         return result
