@@ -5,6 +5,7 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.TextUtils
+import android.widget.Toast
 import com.example.roomwithviewmodel.databinding.ActivityNewWordBinding
 
 class NewWordActivity : AppCompatActivity() {
@@ -22,7 +23,7 @@ class NewWordActivity : AppCompatActivity() {
                 setResult(Activity.RESULT_CANCELED,replyIntent)
             }
             else{
-                replyIntent.putExtra(EXTRA_REPLY,binding.editWord.text)
+                replyIntent.putExtra(EXTRA_REPLY,binding.editWord.text.toString())
                 setResult(Activity.RESULT_OK,replyIntent)
             }
             finish()
@@ -33,6 +34,6 @@ class NewWordActivity : AppCompatActivity() {
     }
 
     companion object {
-        const val EXTRA_REPLY = "com.example.android.wordlist.REPLY"
+        const val EXTRA_REPLY = "com.example.android.wordlistsql.REPLY"
     }
 }

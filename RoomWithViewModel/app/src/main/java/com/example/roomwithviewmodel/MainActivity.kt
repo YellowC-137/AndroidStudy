@@ -3,6 +3,7 @@ package com.example.roomwithviewmodel
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -30,18 +31,28 @@ class MainActivity : AppCompatActivity() {
 
 
         bindig.fab.setOnClickListener {
-            startActivity(Intent(this, NewWordActivity::class.java))
+            startActivityForResult(
+                Intent(this, NewWordActivity::class.java),
+                newWordActivityRequestCode
+            )
+        }
+
+        bindig.fab2.setOnClickListener {
+            viewModel.delete()
         }
 
 
     }
-    override fun onActivityResult(requestCode: Int, resultCode: Int, intentData: Intent?) {
-        super.onActivityResult(requestCode, resultCode, intentData)
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
 
         if (requestCode == newWordActivityRequestCode && resultCode == Activity.RESULT_OK) {
-            intentData?.getStringExtra(NewWordActivity.EXTRA_REPLY)?.let { reply ->
-                val word = Word(0,reply)
+            data?.getStringExtra(NewWordActivity.EXTRA_REPLY)?.let {
+                Log.d("RESULT", "onActivityResult: $it")
+                val word = Word(0, it.toString())
                 viewModel.insert(word)
+                Toast.makeText(this, it, Toast.LENGTH_SHORT).show()
             }
         } else {
             Toast.makeText(

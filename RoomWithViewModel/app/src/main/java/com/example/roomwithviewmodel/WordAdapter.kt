@@ -1,9 +1,7 @@
 package com.example.roomwithviewmodel
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -11,17 +9,22 @@ import com.example.roomwithviewmodel.databinding.RecyclerviewItemBinding
 
 class WordAdapter : ListAdapter<Word, WordAdapter.ViewHolder>(diffUtil) {
 
-    inner class ViewHolder(private val binding: RecyclerviewItemBinding):
-        RecyclerView.ViewHolder(binding.root){
-        fun bind(items: Word){
+    inner class ViewHolder(private val binding: RecyclerviewItemBinding) :
+        RecyclerView.ViewHolder(binding.root) {
+        fun bind(items: Word) {
             binding.textView.text = items.word
             binding.uid.text = items.uid.toString()
-
         }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        return ViewHolder(RecyclerviewItemBinding.inflate(LayoutInflater.from(parent.context),parent,false))
+        return ViewHolder(
+            RecyclerviewItemBinding.inflate(
+                LayoutInflater.from(parent.context),
+                parent,
+                false
+            )
+        )
 
     }
 
@@ -35,7 +38,7 @@ class WordAdapter : ListAdapter<Word, WordAdapter.ViewHolder>(diffUtil) {
                 oldItem: Word,
                 newItem: Word
             ): Boolean {
-                return oldItem==newItem
+                return oldItem.hashCode() == newItem.hashCode()
             }
 
             override fun areContentsTheSame(

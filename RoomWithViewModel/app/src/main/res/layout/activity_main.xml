@@ -28,4 +28,14 @@
         android:layout_margin="16dp"
         />
 
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab2"
+        android:src="@drawable/ic_android_black_24dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
