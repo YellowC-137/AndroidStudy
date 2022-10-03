@@ -32,9 +32,15 @@ android {
         jvmTarget = '1.8'
     }
     buildFeatures{
-        dataBinding = true
         viewBinding = true
     }
+
+    kotlinOptions{
+        freeCompilerArgs += [
+                "-Xjvm-default=all",
+        ]
+    }
+
 }
 
 dependencies {
