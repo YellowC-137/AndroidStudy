@@ -21,6 +21,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.example.android.unscramble.R
@@ -39,22 +40,46 @@ class GameFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
 
-        binding = GameFragmentBinding.inflate(inflater, container, false)
+        //다음은 뷰바인딩 binding = GameFragmentBinding.inflate(inflater, container, false)
+        binding = DataBindingUtil.inflate(inflater, R.layout.game_fragment, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        binding.gameViewModel = viewModel
+        binding.maxNoOfWords = MAX_NO_OF_WORDS
+        binding.lifecycleOwner = viewLifecycleOwner
         updateNextWordOnScreen()
+        /*
+        livedata사용으로 필요없어짐!
+
         binding.score.text = getString(R.string.score, 0)
         binding.wordCount.text = getString(
             R.string.word_count, 0, MAX_NO_OF_WORDS
         )
+        */
+
         Log.d(
             "TEST",
             "${viewModel.currentScrambledWord} / ${viewModel.score}  / ${viewModel.currentWordCount}"
         )
+
+        binding.submit.setOnClickListener {
+            onSubmitWord()
+        }
+        binding.skip.setOnClickListener {
+            onSkipWord()
+        }
+
+        //LiveData가 Fragment수명주기를 인식하고 옵저버에게 알림, pdateNextWordOnScreen() 메서드가 아닌 LiveData 관찰자에서 자동으로 업데이트
+        /*
+        databinding으로 LiveData가 직접 업데이트해줌!
+        viewModel.currentScrambledWord.observe(viewLifecycleOwner) { newWord ->
+            binding.textViewUnscrambledWord.text = newWord
+        }
+
+        */
     }
 
     override fun onDetach() {
@@ -85,12 +110,12 @@ class GameFragment : Fragment() {
     }
 
     private fun updateNextWordOnScreen() {
-        binding.textViewUnscrambledWord.text = viewModel.currentScrambledWord
+        binding.textViewUnscrambledWord.text = viewModel.currentScrambledWord.value
     }
 
     private fun showFinalScoreDialog() {
         MaterialAlertDialogBuilder(requireContext()).setTitle(getString(R.string.congratulations))
-            .setMessage(getString(R.string.you_scored, viewModel.score)).setCancelable(false)
+            .setMessage(getString(R.string.you_scored, viewModel.score.value)).setCancelable(false)
             .setNegativeButton(getString(R.string.exit)) { _, _ ->
                 exitGame()
             }
@@ -104,11 +129,11 @@ class GameFragment : Fragment() {
     private fun onSubmitWord() {
         val playerWord = binding.textInputEditText.text.toString()
 
+        //updateNextWordOnScreen()와 추가 조건문 불필요 -> LiveData에서 옵저버가 대신해준다.
+
         if (viewModel.isUserWordCorrect(playerWord)) {
             setErrorTextField(false)
-            if (viewModel.nextWord()) {
-                updateNextWordOnScreen()
-            } else {
+            if (!viewModel.nextWord()) {
                 showFinalScoreDialog()
             }
         } else {
