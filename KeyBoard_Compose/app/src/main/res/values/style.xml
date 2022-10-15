@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="content_textview">
+        <item name="android:textSize">14sp</item>
+        <item name="android:layout_margin">16dp</item>
+        <item name="android:textColor">#4B4E57</item>
+    </style>
+
+
+    <style name="highlight_textview">
+        <item name="android:textColor">#FF417D</item>
+    </style>
+
+</resources>

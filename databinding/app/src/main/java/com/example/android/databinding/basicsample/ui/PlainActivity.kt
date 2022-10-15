@@ -17,77 +17,33 @@
 package com.example.android.databinding.basicsample.ui
 
 import android.content.Context
-import android.content.res.ColorStateList
 import android.graphics.drawable.Drawable
 import android.os.Bundle
-import android.view.View
-import android.widget.ImageView
-import android.widget.ProgressBar
-import android.widget.TextView
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import androidx.core.widget.ImageViewCompat
-import androidx.lifecycle.ViewModelProviders
+import androidx.databinding.DataBindingUtil
 import com.example.android.databinding.basicsample.R
 import com.example.android.databinding.basicsample.data.Popularity
 import com.example.android.databinding.basicsample.data.SimpleViewModel
 import com.example.android.databinding.basicsample.databinding.PlainActivityBinding
 
-/**
- * Plain old activity with lots of problems to fix.
- */
 class PlainActivity : AppCompatActivity() {
 
     // Obtain ViewModel from ViewModelProviders
-    private val viewModel by lazy { ViewModelProviders.of(this).get(SimpleViewModel::class.java) }
-    private lateinit var binding : PlainActivityBinding
+    private val viewModel: SimpleViewModel by viewModels()
+    private lateinit var binding: PlainActivityBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = PlainActivityBinding.inflate(layoutInflater)
+        val binding: PlainActivityBinding =
+            DataBindingUtil.setContentView(this, R.layout.plain_activity)
 
         setContentView(binding.root)
 
         binding.viewmodel = viewModel
+        binding.lifecycleOwner = this
 
-        updateName()
-        updateLikes()
-    }
-
-    /**
-     * This method is triggered by the `android:onclick` attribute in the layout. It puts business
-     * logic in the activity, which is not ideal. We should do something about that.
-     */
-    fun onLike(view: View) {
-        viewModel.onLike()
-        updateLikes()
-    }
-
-    /**
-     * So much findViewById! We'll fix that with Data Binding.
-     */
-    private fun updateName() {
-        binding.firstName = viewModel.name
-        binding.lastName = viewModel.lastName
-    }
-
-    /**
-     * This method has many problems:
-     * - It's calling findViewById multiple times
-     * - It has untestable logic
-     * - It's updating two views when called even if they're not changing
-     */
-    private fun updateLikes() {
-        findViewById<TextView>(R.id.likes).text = viewModel.likes.toString()
-        findViewById<ProgressBar>(R.id.progressBar).progress =
-            (viewModel.likes * 100 / 5).coerceAtMost(100)
-        val image = findViewById<ImageView>(R.id.imageView)
-
-        val color = getAssociatedColor(viewModel.popularity, this)
-
-        ImageViewCompat.setImageTintList(image, ColorStateList.valueOf(color))
-
-        image.setImageDrawable(getDrawablePopularity(viewModel.popularity, this))
     }
 
     private fun getAssociatedColor(popularity: Popularity, context: Context): Int {
