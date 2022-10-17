@@ -11,7 +11,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="CAMERA"
-        app:layout_constraintBottom_toTopOf="@id/btn_album"
+        app:layout_constraintBottom_toTopOf="@id/album"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -24,13 +24,12 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/btn_album" />
+        app:layout_constraintTop_toBottomOf="@id/album" />
 
-    <Button
-        android:id="@+id/btn_album"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Album"
+    <VideoView
+        android:id="@+id/album"
+        android:layout_width="0dp"
+        android:layout_height="300dp"
         app:layout_constraintBottom_toTopOf="@id/btn_x"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
