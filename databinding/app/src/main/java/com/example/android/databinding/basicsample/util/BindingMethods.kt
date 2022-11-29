@@ -42,4 +42,4 @@ import androidx.databinding.BindingMethods
         method = "setImageResource"
     )
 )
-class BindingMethods
+class MyBindingMethods
