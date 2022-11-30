@@ -16,4 +16,18 @@ CodeLabs
 - databinding
 - kotlin-coroutines
 - testMap
-- 
+
+FC
+
+DI
+
+Test
+
+
+Coroutine
+- LiveData
+- RxJava
+- Flow
+
+JetPack
+- Paging
