@@ -17,7 +17,7 @@ CodeLabs
 - kotlin-coroutines
 - testMap
 
-FC
+FastCampus
 
 DI
 
@@ -31,3 +31,9 @@ Coroutine
 
 JetPack
 - Paging
+
+shopper(Udemy)
+- JetPack (LiveData,Room,RecyclerView,BottomNavigation)
+- AAC,MVVM
+- retrofit2
+- Couroutine
