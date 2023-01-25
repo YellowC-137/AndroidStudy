@@ -17,6 +17,11 @@
 package com.example.android.kotlincoroutines.main
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import com.example.android.kotlincoroutines.fakes.MainNetworkFake
+import com.example.android.kotlincoroutines.fakes.TitleDaoFake
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.test.runBlockingTest
 import org.junit.Rule
 import org.junit.Test
 
@@ -27,12 +32,28 @@ class TitleRepositoryTest {
 
     @Test
     fun whenRefreshTitleSuccess_insertsRows() {
-        // TODO: Write this test
+        val subject = TitleRepository(
+            MainNetworkFake("OK"),
+            TitleDaoFake("title")
+        )
+        //runBlocking,runBlockingTest 대신에 launch를 사용하여 바로 응답을 받아야함.
+        GlobalScope.launch {
+            subject.refreshTitle()
+            //refreshTitle이 정지함수 이므로 이를
+            // 비동기적으로 실행하기 위해서 GlobalScope에서 실행
+
+        }
+
+
     }
 
     @Test(expected = TitleRefreshError::class)
-    fun whenRefreshTitleTimeout_throws() {
-        // TODO: Write this test
+    fun whenRefreshTitleTimeout_throws() = runBlockingTest{
+        val subject = TitleRepository(
+            MainNetworkFake("OK"),
+            TitleDaoFake("title")
+        )
+        subject.refreshTitle()
         throw TitleRefreshError("Remove this – made test pass in starter code", null)
     }
 }
