@@ -21,7 +21,13 @@ plugins {
     id 'androidx.navigation.safeargs.kotlin'
 }
 
+tasks.register("prepareKotlinBuildScriptModel"){}
+
 android {
+    task wrapper(type: Wrapper) {
+        gradleVersion = '7.0'
+    }
+
     compileSdkVersion 33
 
     defaultConfig {
