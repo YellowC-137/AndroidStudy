@@ -16,21 +16,35 @@
 package com.example.busschedule
 
 import android.os.Bundle
+import android.util.SizeF
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.coroutineScope
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.busschedule.databinding.FullScheduleFragmentBinding
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 
-class FullScheduleFragment: Fragment() {
+class FullScheduleFragment : Fragment() {
 
     private var _binding: FullScheduleFragmentBinding? = null
 
     private val binding get() = _binding!!
 
     private lateinit var recyclerView: RecyclerView
+
+    private val viewModel: ViewModel by activityViewModels {
+        ScheduleFactory(
+            (activity?.application as BusApplication).db.scheduleDao()
+        )
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -44,8 +58,21 @@ class FullScheduleFragment: Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        val busAdapter = BusAdapter {
+            val action = FullScheduleFragmentDirections
+                .actionFullScheduleFragmentToStopScheduleFragment(stopName = it.stopname)
+            view.findNavController().navigate(action)
+        }
         recyclerView = binding.recyclerView
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
+        recyclerView.adapter = busAdapter
+
+        lifecycle.coroutineScope.launch {
+            viewModel.getSchedules().collect() {
+                busAdapter.submitList(it)
+            }
+        }
     }
 
     override fun onDestroyView() {
