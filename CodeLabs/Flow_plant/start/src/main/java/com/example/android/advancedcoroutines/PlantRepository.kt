@@ -25,6 +25,7 @@ import com.example.android.advancedcoroutines.util.CacheOnSuccess
 import com.example.android.advancedcoroutines.utils.ComparablePair
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.withContext
 
 /**
@@ -41,9 +42,16 @@ class PlantRepository private constructor(
     private val plantService: NetworkService,
     private val defaultDispatcher: CoroutineDispatcher = Dispatchers.Default
 ) {
+
+
+    fun getPlantsWithFrowZoneFlow(growZoneNumber: GrowZone): Flow<List<Plant>> {
+        return plantDao.getPlantswithGrowZoneNumberFlow(growZoneNumber.number)
+    }
+
+
     @AnyThread
     suspend fun List<Plant>.applyMainSafeSort(customSortOrder: List<String>) =
-        //디스 패쳐간 전환을 위함,  IO 디스패처는 네트워크나 디스크에서 읽기와 같은 IO 작업에 최적화되어 있고,
+    //디스 패쳐간 전환을 위함,  IO 디스패처는 네트워크나 디스크에서 읽기와 같은 IO 작업에 최적화되어 있고,
         // 기본 디스패처는 CPU 집약적인 작업에 최적
         withContext(defaultDispatcher) {
             this@applyMainSafeSort.applySort(customSortOrder)
@@ -57,6 +65,20 @@ class PlantRepository private constructor(
         }) {
             plantService.customPlantSortOrder()
         }
+
+    private val customSortFlow = plantsListSortOrderCache::getOrAwait.asFlow()
+
+    //customSortFlow가 활성화되면 최근 값의 flow와 합하여 다시 정렬시킨다.
+    //sortOrder나 plants의 변경이 생기면 다시 호출된다.
+    val plantsFlow: Flow<List<Plant>>
+        get() = plantDao.getPlantsFlow()
+            .combine(customSortFlow) { plants, order ->
+                plants.applySort(order)
+            }.flowOn(defaultDispatcher).conflate()
+    //디스패쳐에서 새 코루틴을 실행해 flowOn의 호출 전에 flow를 실행후 수집,
+    //버퍼를 도입해 새 코루틴의 결과를 이후 호출로 전송
+    //버퍼의 값을 flowOn 이후의 Flow에 보낸다.(ViewModel로)
+
 
     //목록을 다시 정렬하여 plants를 목록 앞부분에 배치한다.
     private fun List<Plant>.applySort(customSortOrder: List<String>): List<Plant> {
@@ -77,6 +99,13 @@ class PlantRepository private constructor(
         })
     }
 
+    fun getPlantsWithGrowZoneFlow(growZone: GrowZone): Flow<List<Plant>> {
+        return plantDao.getPlantswithGrowZoneNumberFlow(growZone.number).map {
+            val sortOrderFromNetwork = plantsListSortOrderCache.getOrAwait()
+            val nextval = it.applyMainSafeSort(sortOrderFromNetwork)
+            nextval
+        }
+    }
 
     fun getPlantsWithGrowZone(growZone: GrowZone) =
         plantDao.getPlantsWithGrowZoneNumber(growZone.number)
