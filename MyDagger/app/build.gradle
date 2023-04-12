@@ -4,12 +4,12 @@ plugins {
 }
 
 android {
-    namespace 'yellowc.app.servicetest'
+    namespace 'yellowc.app.mydagger'
     compileSdk 33
 
     defaultConfig {
-        applicationId "yellowc.app.servicetest"
-        minSdk 26
+        applicationId "yellowc.app.mydagger"
+        minSdk 31
         targetSdk 33
         versionCode 1
         versionName "1.0"
@@ -29,9 +29,6 @@ android {
     }
     kotlinOptions {
         jvmTarget = '1.8'
-    }
-    buildFeatures{
-        viewBinding true
     }
 }
 
